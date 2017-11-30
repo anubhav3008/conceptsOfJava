@@ -1,12 +1,12 @@
 package conceptsOfJava.multithreading;
 
-import java.util.ArrayList;
+import java.util.Vector;
 
 public class ProducerConsumer {
 
 	public static void main(String args[]){
 
-		ArrayList<Integer> x= new ArrayList<>();
+		Vector x= new Vector();
 		int size=10;
 		Thread t1=new Thread(new Producer(x, size));
 
@@ -20,9 +20,9 @@ public class ProducerConsumer {
 
 }
 class Producer implements Runnable{
-	volatile ArrayList<Integer> list;
+	volatile Vector list;
 	int size;
-	Producer(ArrayList<Integer> list, int size){
+	Producer(Vector list, int size){
 		this.list = list;
 		this.size =  size;
 	}
@@ -40,26 +40,19 @@ class Producer implements Runnable{
 
 						e.printStackTrace();
 					}
-					System.out.println("producing at index =  "+(list.size()));
-					list.add((int) Math.random()*10);
-					System.out.println("list status at producer code = "+list);
-					list.notifyAll();
 				}
 
 			}
 
 
 			synchronized (list) {
-				if(list.size()<size){
-					System.out.println("producing at index =  "+(list.size()));
-					list.add((int)Math.random()*10);
-					list.notifyAll();
-					System.out.println("list status at producer code = "+list);
-				}
 
-
-
+				System.out.println("producing at index =  "+(list.size()));
+				list.add((int)(Math.random()*10));
+				list.notifyAll();
+				System.out.println("list status at producer code = "+list);
 			}
+
 		}
 
 	}
@@ -69,9 +62,9 @@ class Producer implements Runnable{
 
 
 class Consumer implements Runnable{
-	volatile ArrayList<Integer> list;
+	Vector list;
 	int size;
-	Consumer(ArrayList<Integer> list, int size){
+	Consumer(Vector list, int size){
 		this.list = list;
 		this.size =  size;
 	}
@@ -89,25 +82,15 @@ class Consumer implements Runnable{
 
 						e.printStackTrace();
 					}
-					System.out.println("removing the index = "+(list.size()-1));
-					list.remove(list.size()-1);
-					System.out.println("list status at consumer code = "+list);
-					list.notifyAll();
 				}
-
 			}
-
 			synchronized (list) {
-				if(list.size()>0){
-					System.out.println("removing the index = "+(list.size()-1));
-					list.remove(list.size()-1);
-					System.out.println("list status at consumer code = "+list);
-					list.notifyAll();
-				}
+				System.out.println("removing");
+				list.remove(0);
+				list.notifyAll();
 			}
-
-
-
+			System.out.println("list status at consumer code = "+list);
+			
 		}
 	}
 
